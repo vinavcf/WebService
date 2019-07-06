@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using WebService.Models;
 
 namespace WebService
 {
@@ -31,8 +33,13 @@ namespace WebService
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
+            var connection = @"Server=(localdb)\mssqllocaldb;Database=WebServiceDb;Trusted_Connection=True;ConnectRetryCount=0";
+            services.AddDbContext<Context>(options => options.UseSqlServer(connection));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc().AddJsonOptions(
+                options => options.SerializerSettings.Formatting =
+                Newtonsoft.Json.Formatting.Indented
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,7 +63,7 @@ namespace WebService
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Condicao}/{action=Index}/{id?}");
             });
         }
     }
